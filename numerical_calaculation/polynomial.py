@@ -1,15 +1,15 @@
-def polynomial(nums):
+def polynomial(parameters):
     """
-
-    :param nums:
-    :return:
+    多项式
+    :param parameters: 未知数系数列表，从高到低
+    :return: 多项式结果
     """
-    len_ = len(nums)
+    len_ = len(parameters)
 
     def f(x):
         _sum = 0
         for i in range(len_):
-            _sum += nums[i] * x ** (len_ - i - 1)
+            _sum += parameters[i] * x ** (len_ - i - 1)
         return _sum
 
     return lambda x: f(x)
