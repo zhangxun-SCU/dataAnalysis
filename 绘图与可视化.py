@@ -4,7 +4,7 @@ import numpy as np
 from datetime import datetime
 from io import BytesIO
 import seaborn as sns
-import i
+
 
 if __name__ == '__main__':
     data = np.arange(10)
