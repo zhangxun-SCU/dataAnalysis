@@ -37,6 +37,17 @@ def derivation(parameters, order=1):
     return results[order - 1]
 
 
+def autoderivation(f, interval=1e-5):
+    """
+    求f对x的导数值
+    :param f: 求导函数
+    :param x: 求导点
+    :param interval:  选取间隔
+    :return: x点的导数值（本质近似值）
+    """
+    return lambda x: (f(x + interval) - f(x - interval)) / (2*interval)
+
+
 if __name__ == "__main__":
     test = derivation([3, 6,4,1], 3)
     print(test)

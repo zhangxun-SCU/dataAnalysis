@@ -1,5 +1,6 @@
-import polynomial
+from mutils import *
 import numpy as np
+
 
 def iterative(start, times, parameters):
     """
@@ -9,7 +10,6 @@ def iterative(start, times, parameters):
     :param parameters: 多项式参数
     :return: 迭代结果，迭代经过
     """
-
     _len = len(parameters)
 
     def f(x):
@@ -20,9 +20,10 @@ def iterative(start, times, parameters):
         return _sum
 
     x_t = start
+    x_t1 = f(x_t)
     for i in range(times):
-        x_t1 = f(x_t)
         x_t = x_t1
+        x_t1 = f(x_t)
     return x_t
 
 
@@ -30,17 +31,24 @@ def softIterative(start, times, parameters):
     pass
 
 
-def NewTonIterative(start, times, parameters):
+def NewTonIterative(f, start, loss=1e-5/2):
+    df = autoderivation(f, 1e-5)
     x_t = start
-    f = polynomial.polynomial(parameters)
-    f_1 = polynomial.polynomial(polynomial.derivation(parameters, 1))
-    for i in range(times):
-        x_t1 = x_t - (f(x_t)/f_1(x_t))
+    x_t1 = x_t - (f(x_t)/df(x_t))
+    while np.fabs(x_t - x_t1) > loss:
         x_t = x_t1
-    return x_t
+        x_t1 = x_t - (f(x_t)/df(x_t))
+        print(f"""初始值：{start}，导数值：{df(x_t)} 迭代值：{x_t1}，误差：{np.fabs(x_t - x_t1)}，要求误差：{loss}
+                """)
+    return x_t1
 
 
 if __name__ == '__main__':
+
+    def f(x):
+        return x**2 - 7
+
+    print(NewTonIterative(f, 2.5))
     import matplotlib
     import matplotlib.pyplot as plt
     #
