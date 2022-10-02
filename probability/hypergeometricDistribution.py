@@ -24,7 +24,7 @@ class H:
         """
         return self.probs[k]
 
-    def plot(self, show=True):
+    def plot(self, show=False):
         """
         画出分布图
         :param show: 是否显示图像

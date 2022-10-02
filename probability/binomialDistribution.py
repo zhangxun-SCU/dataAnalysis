@@ -22,7 +22,7 @@ class B:
         """
         return self.probs[k]
 
-    def plot(self, show=True):
+    def plot(self, show=False):
         """
         分布图
         :param show: 是否显示

@@ -27,7 +27,7 @@ def scan(interval, step, rate, f):
 
 
 if __name__ == '__main__':
-    from mutils import *
+    from utils import *
 
     f = polynomial([1, 1, 1, 2])
     print(f(1))

@@ -18,7 +18,7 @@ class G:
         """
         return self.p * self.q ** (k - 1)
 
-    def plot(self, n, show=True):
+    def plot(self, n, show=False):
         """
         画图，
         :param n:试验总次数为n
@@ -29,7 +29,8 @@ class G:
         probs = [self.prob(i) for i in range(1, n + 1)]
         fig, ax = plt.subplots()
         ax.scatter(x, probs)
-        plt.show()
+        if show:
+            plt.show()
         return ax, (x, probs)
 
 
