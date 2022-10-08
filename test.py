@@ -1,23 +1,10 @@
+import numpy as np
 import matplotlib.pyplot as plt
+import math
 
 
-class GeometricDistribution:
-    def __int__(self, p):
-        self.p = p
-        self.q = 1-p
+print(math.sin((54 * math.pi / 180 + 1 * math.pi / 60 / 180 + 60 * math.pi / 180) / 2) / math.sin(60 / 2 * math.pi / 180))
 
-    def prob(self, k):
-        """
-        第k次成功的概率：
-        :param k: 第k次p发生
-        :return: 概率值
-        """
-        return self.p * self.q ** (k - 1)
+print(math.sin(60 / 2 * math.pi / 180))
 
-    def plot(self):
-        pass
-
-
-if __name__ == '__main__':
-    test = GeometricDistribution(0.7)
-    print(test.prob(2))
+print(math.cos((54 * math.pi / 180 + 1 * math.pi / 60 / 180 + 60 * math.pi / 180) / 2) / 2 / math.sin(30 * math.pi / 180) * (2.01 / 2 * (math.pi / 60 / 180)**2))

@@ -44,4 +44,4 @@ def Gamma(a, interval=1e-5):
 
 
 if __name__ == '__main__':
-    print(Gamma(1, 0.00001))
+    print(Gamma(1, 0.001))

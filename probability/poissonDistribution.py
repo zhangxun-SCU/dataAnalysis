@@ -14,3 +14,4 @@ class P:
 
     def prob(self, k):
         return self.getProb(k)
+
