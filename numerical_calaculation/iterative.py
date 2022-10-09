@@ -103,20 +103,25 @@ def JacobiIter(X, ls=0.5e-6):
     """
     Jacobi迭代法求解方程组
     :param X: 方程系数矩阵
+    :param ls:
     :return:
     """
     # 得到LDU和b
     L, D, U = LDU(X[:, :-1])
     b = X[:, -1]
+    count = 1
     # 随机初始化x_0
     start = np.random.random(b.shape)
     x_0 = start
     x_1 = -np.matmul(-np.linalg.inv(D), np.matmul(L + U, x_0)) + np.matmul(np.linalg.inv(D), b)
+    print(f"""第{count}次迭代:  初始值: {start}, 迭代值: {x_1} 
+                            """)
     while np.linalg.norm(x_1 - x_0) > ls:
+        count += 1
         x_0 = x_1
         x_1 = -np.matmul(np.linalg.inv(D), np.matmul(L + U, x_0)) + np.matmul(np.linalg.inv(D), b)
-        print(f"""初始值: {start}, 迭代值: {x_1} 
-        """)
+        print(f"""第{count}次迭代:  初始值: {start}, 迭代值: {x_1} 
+                                """)
     return x_1
 
 
@@ -124,19 +129,55 @@ def Gauss_Seidel_Iter(X, ls=0.5e-6):
     """
     Gauss-Seidel迭代法求线性方程组
     :param X:
+    :param ls:
     :return: result
     """
     L, D, U = LDU(X[:, :-1])
     b = X[:, -1]
     # 初始值
+    count = 1
     start = np.random.random(b.shape)
     x_0 = start
     x_1 = -np.matmul(np.linalg.inv(D + L), np.matmul(U, x_0)) + np.matmul(np.linalg.inv(D + L), b)
+    print(f"""第{count}次迭代:  初始值: {start}, 迭代值: {x_1} 
+                    """)
     while np.linalg.norm(x_1 - x_0) > ls:
+        count += 1
         x_0 = x_1
         x_1 = -np.matmul(np.linalg.inv(D + L), np.matmul(U, x_0)) + np.matmul(np.linalg.inv(D + L), b)
-        print(f"""初始值: {start}, 迭代值: {x_1} 
-            """)
+        print(f"""第{count}次迭代:  初始值: {start}, 迭代值: {x_1} 
+                                """)
+    return x_1
+
+
+def SOR(X, w=1.0, ls=0.5e-6):
+    """
+    超松弛迭代求解线性方程组
+    :param X:
+    :param w:
+    :param ls:
+    :return:
+    """
+    L, D, U = LDU(X[:, :-1])
+    b = X[:, -1]
+    I = np.eye(L.shape[0], L.shape[1])
+    # 初始值
+    start = np.random.random(b.shape)
+    x_0 = start
+    count = 1
+    x_1 = np.matmul(np.linalg.inv(I + w * np.matmul(np.linalg.inv(D), L)),
+                    np.matmul((1 - w) * I - w * np.matmul(np.linalg.inv(D), U), x_0)) + w * np.matmul(
+        np.linalg.inv(I + w * np.matmul(np.linalg.inv(D), L)), np.matmul(np.linalg.inv(D), b))
+    print(f"""第{count}次迭代:  初始值: {start}, 迭代值: {x_1} 
+                """)
+    while np.linalg.norm(x_1 - x_0) > ls:
+        count += 1
+        x_0 = x_1
+        x_1 = np.matmul(np.linalg.inv(I + w * np.matmul(np.linalg.inv(D), L)),
+                        np.matmul((1 - w) * I - w * np.matmul(np.linalg.inv(D), U), x_0)) + w * np.matmul(
+            np.linalg.inv(I + w * np.matmul(np.linalg.inv(D), L)), np.matmul(np.linalg.inv(D), b))
+        print(f"""第{count}次迭代:  初始值: {start}, 迭代值: {x_1} 
+                        """)
     return x_1
 
 
@@ -145,5 +186,8 @@ if __name__ == '__main__':
                        [3, 4, -1, 30],
                        [0, -1, 4, -24]])
 
-    print(JacobiIterative(matrix))
-    print(G_SIterative(matrix))
+    print(JacobiIter(matrix))
+    print("----------------------------------------------------------------------------")
+    print(Gauss_Seidel_Iter(matrix))
+    print("----------------------------------------------------------------------------")
+    print(SOR(matrix, w=1.3))
