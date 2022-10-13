@@ -66,8 +66,6 @@ def NewTonIter(f, start, loss=1e-5 / 2):
     while np.fabs(x_t - x_t1) > loss:
         x_t = x_t1
         x_t1 = x_t - (f(x_t) / df(x_t))
-        print(f"""初始值：{start}，导数值：{df(x_t)} 迭代值：{x_t1}，误差：{np.fabs(x_t - x_t1)}，要求误差：{loss}
-                """)
     return x_t1
 
 
@@ -114,14 +112,11 @@ def JacobiIter(X, ls=0.5e-6):
     start = np.random.random(b.shape)
     x_0 = start
     x_1 = -np.matmul(-np.linalg.inv(D), np.matmul(L + U, x_0)) + np.matmul(np.linalg.inv(D), b)
-    print(f"""第{count}次迭代:  初始值: {start}, 迭代值: {x_1} 
-                            """)
+
     while np.linalg.norm(x_1 - x_0) > ls:
         count += 1
         x_0 = x_1
         x_1 = -np.matmul(np.linalg.inv(D), np.matmul(L + U, x_0)) + np.matmul(np.linalg.inv(D), b)
-        print(f"""第{count}次迭代:  初始值: {start}, 迭代值: {x_1} 
-                                """)
     return x_1
 
 
@@ -139,14 +134,10 @@ def Gauss_Seidel_Iter(X, ls=0.5e-6):
     start = np.random.random(b.shape)
     x_0 = start
     x_1 = -np.matmul(np.linalg.inv(D + L), np.matmul(U, x_0)) + np.matmul(np.linalg.inv(D + L), b)
-    print(f"""第{count}次迭代:  初始值: {start}, 迭代值: {x_1} 
-                    """)
     while np.linalg.norm(x_1 - x_0) > ls:
         count += 1
         x_0 = x_1
         x_1 = -np.matmul(np.linalg.inv(D + L), np.matmul(U, x_0)) + np.matmul(np.linalg.inv(D + L), b)
-        print(f"""第{count}次迭代:  初始值: {start}, 迭代值: {x_1} 
-                                """)
     return x_1
 
 
@@ -168,26 +159,89 @@ def SOR(X, w=1.0, ls=0.5e-6):
     x_1 = np.matmul(np.linalg.inv(I + w * np.matmul(np.linalg.inv(D), L)),
                     np.matmul((1 - w) * I - w * np.matmul(np.linalg.inv(D), U), x_0)) + w * np.matmul(
         np.linalg.inv(I + w * np.matmul(np.linalg.inv(D), L)), np.matmul(np.linalg.inv(D), b))
-    print(f"""第{count}次迭代:  初始值: {start}, 迭代值: {x_1} 
-                """)
     while np.linalg.norm(x_1 - x_0) > ls:
         count += 1
         x_0 = x_1
         x_1 = np.matmul(np.linalg.inv(I + w * np.matmul(np.linalg.inv(D), L)),
                         np.matmul((1 - w) * I - w * np.matmul(np.linalg.inv(D), U), x_0)) + w * np.matmul(
             np.linalg.inv(I + w * np.matmul(np.linalg.inv(D), L)), np.matmul(np.linalg.inv(D), b))
-        print(f"""第{count}次迭代:  初始值: {start}, 迭代值: {x_1} 
-                        """)
     return x_1
 
 
-if __name__ == '__main__':
-    matrix = np.array([[4, 3, 0, 24],
-                       [3, 4, -1, 30],
-                       [0, -1, 4, -24]])
+def getMaxAbs(Matrix, i):
+    """
+    返回对应列的最大元素和行索引
+    :param Matrix:
+    :param i:
+    :return:
+    """
+    maxIdx = i
+    Max = np.abs(Matrix[i, i])
+    for row in range(i, Matrix.shape[0]):
+        if np.abs(Matrix[row, i]) > Max:
+            maxIdx = row
+            Max = Matrix[row, i]
+    return maxIdx, Max
 
-    print(JacobiIter(matrix))
-    print("----------------------------------------------------------------------------")
-    print(Gauss_Seidel_Iter(matrix))
-    print("----------------------------------------------------------------------------")
-    print(SOR(matrix, w=1.3))
+
+def swapLines(Matrix, row1, row2):
+    """
+    交换两行
+    :param Matrix:
+    :param row1:
+    :param row2:
+    :return:
+    """
+    for col in range(Matrix.shape[1]):
+        Matrix[row1, col], Matrix[row2, col] = Matrix[row2, col], Matrix[row1, col]
+    return Matrix
+
+
+def Gauss(Matrix):
+    """
+    Gauss求解线性方程组
+    :param Matrix: 线性方程组增加广矩阵
+    :return:
+    """
+    row = Matrix.shape[0]
+    col = Matrix.shape[1]
+    for i in range(row - 1):
+        # 第一层循环
+        maxIdx, _max = getMaxAbs(Matrix, i)
+        if i != maxIdx:
+            # 交换
+            Matrix = swapLines(Matrix, i, maxIdx)
+        for j in range(i + 1, row):
+            # 后面的每一行减去第一行除以首元素
+            Matrix[j] -= Matrix[i] * (Matrix[j][i] / Matrix[i][i])
+
+    # 回代
+    re = row - 1
+    while re > 0:
+        re_1 = re - 1
+        while re_1 >= 0:
+            Matrix[re_1] -= Matrix[re] * (Matrix[re_1][re] / Matrix[re][re])
+            re_1 -= 1
+        re -= 1
+
+    return np.array([(Matrix[i][-1] / sum(Matrix[i][:-1])) for i in range(row)])
+
+
+if __name__ == '__main__':
+    A = [[0.8147, 0.0975, 0.1576, 0.1419, 0.6557],
+         [0.9058, 0.2785, 0.9706, 0.4218, 0.0357],
+         [0.1270 * 10 ** 10, 0.5469, 0.9572, 0.9157, 0.8491],
+         [0.9134, 0.9575, 0.4854 * 10 ** 8, 0.7922, 0.9340],
+         [0.6324, 0.9649, 0.8003, 0.9595, 0.6787]]
+    b = [0.000000002258000,
+         0.000000001597700,
+         1.270000002354900,
+         0.024270003904200,
+         0.000000003360250]
+    tmp01 = np.array(A)
+    tmp02 = np.array(b)
+    tmp02 = tmp02.reshape([5, 1]) * 1e9
+    # print(tmp01.shape, tmp02.shape)
+    matrix = np.concatenate((tmp01, tmp02), axis=1)
+    print(Gauss(matrix))
+
