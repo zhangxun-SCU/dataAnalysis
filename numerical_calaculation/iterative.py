@@ -227,21 +227,60 @@ def Gauss(Matrix):
     return np.array([(Matrix[i][-1] / sum(Matrix[i][:-1])) for i in range(row)])
 
 
+def Doolittle(a):
+    """
+    LU/Doolittle分解: a = L * (D * R) = L * U
+    :param a: 待分解矩阵
+    :return:
+    """
+    assert(a.shape[0] == a.shape[1])
+    dim = a.shape[0]
+    L = np.eye(a.shape[0])
+    U = np.zeros(a.shape)
+    for r in range(dim):
+        # U
+        for j in range(r, dim):
+            tmp = 0
+            for k in range(0, r):
+                tmp += L[r][k] * U[k][j]
+            U[r][j] = a[r][j] - tmp
+        # L
+        for i in range(r + 1, dim):
+            tmp = 0
+            for k in range(0, r):
+                tmp += L[i][k] * U[k][r]
+            L[i][r] = (a[i][r] - tmp) / U[r][r]
+    return L, U
+
+
+def Cholesky(a):
+    """
+
+    :param a:
+    :return:
+    """
+
 if __name__ == '__main__':
-    A = [[0.8147, 0.0975, 0.1576, 0.1419, 0.6557],
-         [0.9058, 0.2785, 0.9706, 0.4218, 0.0357],
-         [0.1270 * 10 ** 10, 0.5469, 0.9572, 0.9157, 0.8491],
-         [0.9134, 0.9575, 0.4854 * 10 ** 8, 0.7922, 0.9340],
-         [0.6324, 0.9649, 0.8003, 0.9595, 0.6787]]
-    b = [0.000000002258000,
-         0.000000001597700,
-         1.270000002354900,
-         0.024270003904200,
-         0.000000003360250]
-    tmp01 = np.array(A)
-    tmp02 = np.array(b)
-    tmp02 = tmp02.reshape([5, 1]) * 1e9
-    # print(tmp01.shape, tmp02.shape)
-    matrix = np.concatenate((tmp01, tmp02), axis=1)
-    print(Gauss(matrix))
+    # A = [[0.8147, 0.0975, 0.1576, 0.1419, 0.6557],
+    #      [0.9058, 0.2785, 0.9706, 0.4218, 0.0357],
+    #      [0.1270 * 10 ** 10, 0.5469, 0.9572, 0.9157, 0.8491],
+    #      [0.9134, 0.9575, 0.4854 * 10 ** 8, 0.7922, 0.9340],
+    #      [0.6324, 0.9649, 0.8003, 0.9595, 0.6787]]
+    # b = [0.000000002258000,
+    #      0.000000001597700,
+    #      1.270000002354900,
+    #      0.024270003904200,
+    #      0.000000003360250]
+    # tmp01 = np.array(A)
+    # tmp02 = np.array(b)
+    # tmp02 = tmp02.reshape([5, 1]) * 1e9
+    # # print(tmp01.shape, tmp02.shape)
+    # matrix = np.concatenate((tmp01, tmp02), axis=1)
+    # print(Gauss(matrix))
+    A = np.array([[2, 2, 2],
+                  [3, 2, 4],
+                  [1, -1, 4]])
+    L, U = Doolittle(A)
+    print(L)
+    print(U)
 
