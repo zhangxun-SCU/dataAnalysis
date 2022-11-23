@@ -1,66 +1,24 @@
-import matplotlib.pyplot as plt
 import numpy as np
-import utils
+from matplotlib import pyplot as plt
 
-
-def NewTonIter(f, start, loss=1e-5 / 2):
-    df = utils.autoderivation(f, 1e-5)
-    x_t = start
-    x_t1 = x_t - (f(x_t) / df(x_t))
-    count = 0
-    while np.fabs(x_t - x_t1) > loss:
-        count += 1
-        print(f"""迭代次数:{count}, x_t: {x_t}, x_t1: {x_t1} 
-                """)
-        x_t = x_t1
-        x_t1 = x_t - (f(x_t) / df(x_t))
-    return x_t1
-
-
-def f(x):
-    return np.cos(x) + 1 / (1 + np.exp(-2 * x))
-
-
-def f1(x):
-    return x
-
-
-def f2(x):
-    return np.arccos((-1) / (1 + np.exp(-2 * x)))
-
-
-def f3(x):
-    return 0.5 * np.log(-1 / (1 + (1 / np.cos(x))))
-
-
-if __name__ == '__main__':
-    # 1.
-    print("1:")
-    x_t = 3
-    x_t1 = f2(x_t)
-    count = 0
-    while np.abs(x_t - x_t1) > 1e-5 / 2:
-        count += 1
-        print(f"""迭代次数: {count}, x_t:{x_t}, x_t1: {x_t1} 
-        """)
-        x_t = x_t1
-        x_t1 = f2(x_t)
-    print("迭代结果: ", x_t1)
-
-    # 2
-    print("2:")
-    x_t = 3
-    x_t1 = f3(x_t)
-    count = 0
-    while np.abs(x_t - x_t1) > 1e-5 / 2:
-        count += 1
-        print(f"""迭代次数: {count}, x_t:{x_t}, x_t1: {x_t1} 
-        """)
-        x_t = x_t1
-        x_t1 = f3(x_t)
-    print("结果: ", x_t1)
-
-    # newton
-    print("newton:")
-    print("迭代结果: ", NewTonIter(f, 3))
-
+if __name__ == "__main__":
+    # 解方程 得到a,b
+    factor = np.array([[4, 10],
+                       [10, 30]])
+    results = np.array([[np.log(60) + np.log(30) + np.log(20) + np.log(15)],
+                        [np.log(60) + np.log(30) * 2 + np.log(20) * 3 + np.log(15) * 4]])
+    cb = np.linalg.inv(factor) @ results
+    print(cb)
+    a = np.exp(cb[0, 0])
+    b = cb[1, 0]
+    print(a, b)
+    function = lambda x: a * np.exp(b * x)
+    x = np.linspace(0, 5)
+    y = function(x)
+    sample_x = [1, 2, 3, 4]
+    sample_y = [60, 30, 20, 15]
+    # 作图
+    fig, ax = plt.subplots()
+    ax.plot(x, y)
+    ax.scatter(sample_x, sample_y, c='r')
+    plt.show()
