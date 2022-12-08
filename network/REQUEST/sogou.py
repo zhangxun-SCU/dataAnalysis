@@ -11,5 +11,5 @@ if __name__ == '__main__':
     page_text = response.text
     print(page_text)
     # 持久化存储
-    with open("data/sogou.html", 'w', encoding="utf-8") as f:
+    with open("../data/sogou.html", 'w', encoding="utf-8") as f:
         f.write(page_text)

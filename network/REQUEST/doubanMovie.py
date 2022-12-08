@@ -23,6 +23,6 @@ if __name__ == '__main__':
     }
     response = requests.get(url=url, headers=headers, params=params)
     response_list = response.json()
-    with open('data/movie/doubanMovie.json', 'w', encoding='utf-8') as f:
+    with open('../data/movie/doubanMovie.json', 'w', encoding='utf-8') as f:
         json.dump(response_list, fp=f, ensure_ascii=False)
         print("over")

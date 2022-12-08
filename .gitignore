@@ -239,4 +239,6 @@ cython_debug/
 #.idea/
 
 # my
-network/data/
+network/REQUEST/data/
+network/数据解析/data/
+
