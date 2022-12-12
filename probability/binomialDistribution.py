@@ -37,6 +37,6 @@ class B:
 
 
 if __name__ == '__main__':
-    test = B(100, 0.5)
-    print(test.prob(0))
-    test.plot()
+    test = B(100, 0.6293)
+    print(test.prob(70))
+    test.plot(True)
